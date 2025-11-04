@@ -1,0 +1,12 @@
+POST http://localhost:5000/api/donors
+Content-Type: application/json
+
+{
+  "name": "Mokshagna",
+  "contact": "9999999999",
+  "foodType": "Rice and Curry",
+  "quantity": "10 plates",
+  "availabilityTime": "30-05-2025 6am",
+  "expiryTime": "30-05-2025 9pm",
+  "address": "Hyderabad"
+}

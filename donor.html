@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Food Donation Form</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      max-width: 600px;
+      margin-top: 50px;
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+    button {
+      width: 100%;
+      background-color: #157347;
+      color: white;
+      font-weight: 600;
+      border: none;
+      border-radius: 5px;
+      padding: 10px;
+    }
+    button:hover {
+      background-color: #145a38;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Food Donation Form</h2>
+    <form id="donorForm">
+
+      <div class="mb-3">
+        <label for="name" class="form-label">Donor Name</label>
+        <input id="name" type="text" class="form-control" placeholder="Enter your name" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="contact" class="form-label">Contact Number</label>
+        <input id="contact" type="text" class="form-control" placeholder="Enter phone number" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="foodType" class="form-label">Food Type</label>
+        <input id="foodType" type="text" class="form-control" placeholder="E.g. Rice, Curry, Snacks" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="availabilityTime" class="form-label">Food Availability Time</label>
+        <input id="availabilityTime" type="text" class="form-control" placeholder="E.g. 30-05-2025 6am" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="expiryTime" class="form-label">Estimated Food Expiry Time</label>
+        <input id="expiryTime" type="text" class="form-control" placeholder="E.g. 30-05-2025 9pm" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="quantity" class="form-label">Quantity</label>
+        <input id="quantity" type="text" class="form-control" placeholder="E.g. 10 plates" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="address" class="form-label">Pickup Address</label>
+        <textarea id="address" class="form-control" rows="3" placeholder="Enter pickup address" required></textarea>
+      </div>
+
+      <!-- ✅ Automatically filled location -->
+      <div class="mb-3">
+        <label for="location" class="form-label">Your Current Location</label>
+        <input id="location" type="text" class="form-control" placeholder="Fetching location..." readonly>
+      </div>
+
+      <button type="submit">Submit Donation</button>
+    </form>
+  </div>
+
+  <!-- ✅ Auto-fill GPS coordinates -->
+  <script>
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        document.getElementById("location").value = `${latitude}, ${longitude}`;
+      },
+      (err) => {
+        console.error("Location access denied:", err);
+        document.getElementById("location").placeholder = "Location access denied.";
+      }
+    );
+  </script>
+
+  <!-- ✅ Submit donor data -->
+  <script>
+    document.getElementById("donorForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const donorData = {
+        name: document.getElementById("name").value.trim(),
+        contact: document.getElementById("contact").value.trim(),
+        foodType: document.getElementById("foodType").value.trim(),
+        availabilityTime: document.getElementById("availabilityTime").value.trim(),
+        expiryTime: document.getElementById("expiryTime").value.trim(),
+        quantity: document.getElementById("quantity").value.trim(),
+        address: document.getElementById("address").value.trim(),
+        location: document.getElementById("location").value.trim()
+      };
+
+      try {
+        const response = await fetch("http://localhost:5000/api/donors", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(donorData),
+        });
+
+        if (response.ok) {
+          alert("✅ Donation added successfully!");
+          document.getElementById("donorForm").reset();
+          document.getElementById("location").value = ""; // clear
+        } else {
+          const errorText = await response.text();
+          console.error("Server Error:", errorText);
+          alert("❌ Failed to add donation. Please check your backend connection.");
+        }
+      } catch (err) {
+        console.error("Error:", err);
+        alert("⚠️ Unable to connect to the server. Make sure your Node.js backend is running.");
+      }
+    });
+  </script>
+</body>
+</html>
+
