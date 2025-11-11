@@ -13,7 +13,7 @@
 <body>
  
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg"  style="background-color:#006d77; color:;">
+  <nav class="navbar navbar-expand-lg" style="background-color:#006d77;">
     <div class="container">
       <a class="navbar-brand fw-bold" href="index.html">Zero Waste Feast</a>
       <div class="collapse navbar-collapse" id="navbarNav">
@@ -29,18 +29,56 @@
 
   <div class="container my-5">
     <h2 class="text-center mb-4">NGO / Orphanage Registration</h2>
-    <form>
-      <input class="form-control mb-3" placeholder="NGO Name">
-      <input class="form-control mb-3" placeholder="Contact Person">
-      <input class="form-control mb-3" placeholder="Phone">
-      <input class="form-control mb-3" placeholder="Email">
-      <textarea class="form-control mb-3" placeholder="Address" rows="2"></textarea>
-      <input class="form-control mb-3" placeholder="City">
-      <input class="form-control mb-3" placeholder="State">
-      <button class="btn btn-success w-100">Register NGO</button>
+    <form id="ngoForm">
+      <input id="ngoName" class="form-control mb-3" placeholder="NGO Name" required>
+      <input id="contactPerson" class="form-control mb-3" placeholder="Contact Person" required>
+      <input id="phone" class="form-control mb-3" placeholder="Phone" required>
+      <input id="email" class="form-control mb-3" type="email" placeholder="Email" required>
+      <textarea id="address" class="form-control mb-3" placeholder="Address" rows="2" required></textarea>
+      <input id="city" class="form-control mb-3" placeholder="City" required>
+      <input id="state" class="form-control mb-3" placeholder="State" required>
+      <button type="submit" class="btn btn-success w-100">Register NGO</button>
     </form>
   </div>
 
   <footer class="text-center py-3 bg-light">© 2025 Zero Waste Feast</footer>
+
+  <!-- ✅ Backend connection script -->
+  <script>
+    document.getElementById("ngoForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      // Collect form data
+      const ngoData = {
+        ngoName: document.getElementById("ngoName").value.trim(),
+        contactPerson: document.getElementById("contactPerson").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        address: document.getElementById("address").value.trim(),
+        city: document.getElementById("city").value.trim(),
+        state: document.getElementById("state").value.trim(),
+      };
+
+      try {
+        const response = await fetch("http://localhost:5000/api/ngos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(ngoData),
+        });
+
+        if (response.ok) {
+          alert("✅ NGO registered successfully!");
+          document.getElementById("ngoForm").reset();
+        } else {
+          const errorText = await response.text();
+          console.error("Server Error:", errorText);
+          alert("❌ Failed to register NGO. Please check your backend connection.");
+        }
+      } catch (err) {
+        console.error("Error:", err);
+        alert("⚠️ Unable to connect to backend. Make sure your Node.js server is running.");
+      }
+    });
+  </script>
 </body>
 </html>

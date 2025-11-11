@@ -12,30 +12,62 @@
 </head>
 <body>
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg"  style="background-color:#006d77; color:;">
+  <nav class="navbar navbar-expand-lg">
     <div class="container">
       <a class="navbar-brand fw-bold" href="index.html">Zero Waste Feast</a>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-          <li class="nav-item"><a class="nav-link active" href="donor.html">Donate Food</a></li>
+          <li class="nav-item"><a class="nav-link" href="donor.html">Donate Food</a></li>
           <li class="nav-item"><a class="nav-link" href="ngo_register.html">NGO Register</a></li>
-          <li class="nav-item"><a class="nav-link" href="feedback.html">Feedback</a></li>
+          <li class="nav-item"><a class="nav-link active" href="feedback.html">Feedback</a></li>
         </ul>
       </div>
     </div>
   </nav>
 
+  <!-- Feedback Form -->
   <div class="container my-5">
     <h2 class="text-center mb-4">Share Your Feedback</h2>
-    <form>
-      <input class="form-control mb-3" placeholder="Your Name">
-      <input class="form-control mb-3" placeholder="Email (optional)">
-      <textarea class="form-control mb-3" placeholder="Write your feedback here..." rows="4"></textarea>
-      <button class="btn btn-primary w-100">Submit Feedback</button>
+    <form id="feedbackForm">
+      <input id="name" class="form-control mb-3" placeholder="Your Name" required>
+      <input id="email" class="form-control mb-3" placeholder="Email (optional)">
+      <textarea id="message" class="form-control mb-3" placeholder="Write your feedback here..." rows="4" required></textarea>
+      <button class="btn btn-primary w-100" type="submit">Submit Feedback</button>
     </form>
   </div>
 
   <footer class="text-center py-3 bg-light">© 2025 Zero Waste Feast</footer>
+
+  <!-- ✅ Backend Connection -->
+  <script>
+    document.getElementById("feedbackForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const feedbackData = {
+        name: document.getElementById("name").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        message: document.getElementById("message").value.trim(),
+      };
+
+      try {
+        const response = await fetch("http://localhost:5000/api/feedback", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(feedbackData),
+        });
+
+        if (response.ok) {
+          alert("✅ Feedback submitted successfully! Thank you for your input.");
+          document.getElementById("feedbackForm").reset();
+        } else {
+          alert("❌ Failed to submit feedback. Please try again later.");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("⚠️ Unable to connect to the server. Make sure your backend is running.");
+      }
+    });
+  </script>
 </body>
 </html>
